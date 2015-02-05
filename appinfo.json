@@ -1,0 +1,48 @@
+{
+    "appKeys": {
+        "KEY_CONDITIONS": 1,
+        "KEY_TEMPERATURE": 0
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "Dream Chimney",
+    "longName": "Dream Chimney Watchface",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/dc-ec-header-bmp-background.png",
+                "name": "DC_ES_BMP",
+                "type": "png"
+            },
+            {
+                "file": "images/dc-ec-header-background.png",
+                "name": "DC_EC_HEADER",
+                "type": "png"
+            },
+            {
+                "file": "fonts/perfect-dos-vga.ttf",
+                "name": "FONT_PERFECT_DOS_14",
+                "type": "font"
+            },
+            {
+                "file": "fonts/perfect-dos-vga.ttf",
+                "name": "FONT_PERFECT_DOS_26",
+                "type": "font"
+            },
+            {
+                "file": "fonts/Roboto-Regular_9.ttf",
+                "name": "FONT_ROBOTO_12",
+                "type": "font"
+            }
+        ]
+    },
+    "shortName": "Dream Chimney Watchface",
+    "uuid": "4aa4599d-eea2-4665-8188-56cafdbe16c7",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
