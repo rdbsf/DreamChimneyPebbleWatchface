@@ -12,6 +12,11 @@
     "resources": {
         "media": [
             {
+                "file": "fonts/futura.ttf",
+                "name": "FONT_FUTURA_30",
+                "type": "font"
+            },
+            {
                 "file": "images/dc-ec-header-bmp-background.png",
                 "name": "DC_ES_BMP",
                 "type": "png"
@@ -41,7 +46,7 @@
     "shortName": "Dream Chimney Watchface",
     "uuid": "4aa4599d-eea2-4665-8188-56cafdbe16c7",
     "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.2",
     "watchapp": {
         "watchface": true
     }

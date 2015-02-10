@@ -1,4 +1,6 @@
 #include <pebble.h>
+#include <stdio.h>
+#include <ctype.h>
   
 #define KEY_TEMPERATURE 0
 #define KEY_CONDITIONS 1
@@ -6,7 +8,9 @@
 static Window *s_main_window;
 static TextLayer *s_time_layer;
 static TextLayer *s_date_layer;
-static TextLayer *s_weather_layer;
+static TextLayer *s_date_2_layer;
+static TextLayer *s_track_title_layer;
+static TextLayer *s_track_layer;
 
 static GFont s_time_font;
 static GFont s_date_font;
@@ -15,13 +19,25 @@ static GFont s_weather_font;
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
 
+char *upcase(char *str)
+{
+    char *s = str;
+
+    while (*s)
+    {
+        *s++ = toupper((int)*s);
+    }
+
+    return str;
+}
+
 static void update_time(struct tm *tick_time) {
   // Get a tm structure
   //time_t temp = time(NULL); 
   //struct tm *tick_time = localtime(&temp);
 
   // Create a long-lived buffer
-  static char buffer[] = "00:00 am";
+  static char buffer[] = "00:00";
   
   // Write the current hours and minutes into the buffer
   //if(clock_is_24h_style() == true) {
@@ -29,7 +45,7 @@ static void update_time(struct tm *tick_time) {
   //  strftime(buffer, sizeof("00:00"), "%H:%M", tick_time);
   //} else {
     //Use 12 hour format
-    strftime(buffer, sizeof("00:00 am"), "%I:%M%p", tick_time);
+    strftime(buffer, sizeof("00:00"), "%I:%M", tick_time);
   // }
   
   // Display this time on the TextLayer
@@ -39,6 +55,8 @@ static void update_time(struct tm *tick_time) {
   
 }
 
+
+
 static void main_window_load(Window *window) {
   //Create GBitmap, then set to created BitmapLayer
   s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_DC_ES_BMP);
@@ -47,38 +65,64 @@ static void main_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_background_layer));
   
   // Create time TextLayer
-  s_time_layer = text_layer_create(GRect(5, 65, 139, 65));
+  //s_time_layer = text_layer_create(GRect(5, 65, 139, 65));
+  s_time_layer = text_layer_create(GRect(10, 70, 100, 99));
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_text_color(s_time_layer, GColorBlack);
   text_layer_set_text(s_time_layer, "00:00");
   
   //Create GFont
-  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PERFECT_DOS_26));
+  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_FUTURA_30));
   
   //Apply to TextLayer
   text_layer_set_font(s_time_layer, s_time_font);
-  text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
+  //text_layer_set_text_alignment(s_time_layer, GTextAlignmentRight);
 
-  
-    // Create Date layer
-  s_date_layer = text_layer_create(GRect(5, 89, 139, 89));
-  text_layer_set_background_color(s_date_layer, GColorClear);
-  text_layer_set_text_color(s_date_layer, GColorBlack);
-  text_layer_set_text(s_date_layer, "Monday 4/16/2015");
-  
   time_t temp = time(NULL); 
   struct tm *tick_time = localtime(&temp);
   
-  static char bufferDate[] = "Thu 12/31/2015";
-  strftime(bufferDate, sizeof("Thu 12/31/2015"), "%a %D", tick_time);
+  
+    // Create Date layer
+//  s_date_layer = text_layer_create(GRect(5, 89, 139, 89));
+  s_date_layer = text_layer_create(GRect(115, 70, 134, 70));
+  text_layer_set_background_color(s_date_layer, GColorClear);
+  text_layer_set_text_color(s_date_layer, GColorBlack);
+  text_layer_set_text(s_date_layer, "Mon");
+
+  static char bufferDate[] = "Mon";
+  strftime(bufferDate, sizeof("Mon"), "%a", tick_time);
+  //  strftime(bufferDate, sizeof("Mon Feb 04"), "%a %b %d", tick_time);
+// convert each lowercase char in the string to uppercase
+  upcase(bufferDate);
   text_layer_set_text(s_date_layer, bufferDate);
+  text_layer_set_overflow_mode(s_date_layer, GTextOverflowModeWordWrap);
+  text_layer_set_text_alignment(s_date_layer, GTextAlignmentLeft);
+
+      // Create Date layer
+//  s_date_layer = text_layer_create(GRect(5, 89, 139, 89));
+  s_date_2_layer = text_layer_create(GRect(100, 85, 134, 85));
+  text_layer_set_background_color(s_date_2_layer, GColorClear);
+  text_layer_set_text_color(s_date_2_layer, GColorBlack);
+  text_layer_set_text(s_date_2_layer, "Mon Feb 04");
+
+  static char bufferDate2[] = "Feb 10";
+  strftime(bufferDate2, sizeof("Feb 10"), "%b%d", tick_time);
+  //upcase(bufferDate2);
+  text_layer_set_text(s_date_2_layer, bufferDate2);
+  text_layer_set_overflow_mode(s_date_2_layer, GTextOverflowModeWordWrap);
+  text_layer_set_text_alignment(s_date_2_layer, GTextAlignmentLeft);
+
+  
+  
+  
   
     //Create GFont
   s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PERFECT_DOS_14));
   
     //Apply to TextLayer
   text_layer_set_font(s_date_layer, s_date_font);
-  text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
+    text_layer_set_font(s_date_2_layer, s_date_font);
+  //text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
 
   
   
@@ -87,20 +131,33 @@ static void main_window_load(Window *window) {
   
     // Add it as a child layer to the Window's root layer
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_layer));
+    layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_2_layer));
+
+
+  // Create Track of the Day title layer
+  s_track_title_layer = text_layer_create(GRect(0, 110, 144, 110));
+  text_layer_set_background_color(s_track_title_layer, GColorClear);
+  text_layer_set_text_color(s_track_title_layer, GColorWhite);
+  text_layer_set_text_alignment(s_track_title_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_track_title_layer, "TRACK OF THE DAY:");
   
+  // Create second custom font, apply it and add to Window
+  s_weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_12));
+  text_layer_set_font(s_track_title_layer, s_weather_font);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_track_title_layer));
   
   // Create TOTD Layer
-  s_weather_layer = text_layer_create(GRect(0, 120, 144, 120));
-  text_layer_set_background_color(s_weather_layer, GColorClear);
-  text_layer_set_text_color(s_weather_layer, GColorWhite);
-  text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
-  text_layer_set_text(s_weather_layer, "Loading...");
+  s_track_layer = text_layer_create(GRect(0, 126, 144, 126));
+  text_layer_set_background_color(s_track_layer, GColorClear);
+  text_layer_set_text_color(s_track_layer, GColorWhite);
+  text_layer_set_text_alignment(s_track_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_track_layer, "Loading track...");
   
   // Create second custom font, apply it and add to Window
   //s_weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PERFECT_DOS_20));
   s_weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_12));
-  text_layer_set_font(s_weather_layer, s_weather_font);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_weather_layer));
+  text_layer_set_font(s_track_layer, s_weather_font);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_track_layer));
   
   
   // Make sure the time is displayed from the start
@@ -120,9 +177,11 @@ static void main_window_unload(Window *window) {
   // Destroy TextLayer
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_date_layer); 
+  text_layer_destroy(s_date_2_layer); 
   
   // Destroy weather elements
-  text_layer_destroy(s_weather_layer);
+  text_layer_destroy(s_track_layer);
+  text_layer_destroy(s_track_title_layer);
   fonts_unload_custom_font(s_weather_font);
 }
 
@@ -172,8 +231,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   }
   
   // Assemble full string and display
-  snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "Track of the Day: '%s' by %s", conditions_buffer, temperature_buffer);
-  text_layer_set_text(s_weather_layer, weather_layer_buffer);
+  snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "'%s' by %s", conditions_buffer, temperature_buffer);
+  text_layer_set_text(s_track_layer, weather_layer_buffer);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
